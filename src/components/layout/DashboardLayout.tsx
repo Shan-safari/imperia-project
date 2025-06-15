@@ -9,7 +9,7 @@ export const DashboardLayout = () => {
     <SidebarProvider>
       <div className="flex h-screen w-full overflow-hidden">
         <AppSidebar />
-        <div className="animated-background flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+        <div className="animated-background flex flex-1 flex-col overflow-y-auto overflow-x-hidden text-white">
           <AppHeader />
           <main className="flex-1 bg-transparent p-4 md:p-6">
             <Outlet />

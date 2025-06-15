@@ -9,7 +9,7 @@ const Index = () => {
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center py-16">
-      <h1 className="md:text-6xl text-4xl font-extrabold text-primary mb-6 text-center">
+      <h1 className="md:text-6xl text-4xl font-extrabold text-white mb-6 text-center">
         {t("landing_title")}
       </h1>
       <div>
