@@ -12,6 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useNavigate } from "react-router-dom";
 
 const primaryRoles = [
   "Mentor",
@@ -39,10 +40,15 @@ export function RoleSelectionForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
+  const navigate = useNavigate();
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log("Form submitted with:", data);
-    // Next steps: navigate to questionnaire or signup form based on selection
+    if (data.secondaryRole) {
+      navigate(`/questionnaire/${data.secondaryRole.toLowerCase()}`);
+    } else if (data.primaryRole) {
+      navigate("/signup");
+    }
   }
 
   return (
