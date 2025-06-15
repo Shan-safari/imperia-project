@@ -3,8 +3,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { useUser } from "@/hooks/use-user"; // Assume this hook provides user info
-import { useSubscription } from "@/hooks/use-subscription"; // Assume for payment status
 
 export default function Dashboard() {
   // Simulated user and subscription state
