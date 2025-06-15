@@ -10,9 +10,10 @@ import {
   SidebarGroup,
   SidebarGroupContent
 } from "@/components/ui/sidebar";
-import { LayoutGrid, Compass, MessageSquare, Gem, HelpCircle, Settings } from "lucide-react";
+import { Home, LayoutGrid, Compass, MessageSquare, Gem, HelpCircle, Settings } from "lucide-react";
 
 const menuItems = [
+    { to: "/", icon: Home, label: "Home" },
     { to: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
     { to: "/explore", icon: Compass, label: "Explore" },
     { to: "/messages", icon: MessageSquare, label: "Messages" },
@@ -34,7 +35,7 @@ export function AppSidebar() {
                     <SidebarMenu>
                         {menuItems.map((item) => (
                             <SidebarMenuItem key={item.to}>
-                                <SidebarMenuButton asChild isActive={location.pathname.startsWith(item.to)} tooltip={item.label}>
+                                <SidebarMenuButton asChild isActive={item.to === '/' ? location.pathname === '/' : location.pathname.startsWith(item.to)} tooltip={item.label}>
                                     <Link to={item.to}>
                                         <item.icon className="h-5 w-5" />
                                         <span>{item.label}</span>
