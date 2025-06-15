@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
@@ -78,8 +77,12 @@ export const AppHeader = () => {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <Button variant="outline" onClick={() => navigate("/auth")}>
-            Login / Signup
+          <Button variant="ghost" className="relative h-8 w-8 rounded-full" onClick={() => navigate("/auth")}>
+            <Avatar className="h-8 w-8">
+              <AvatarFallback className="bg-primary text-primary-foreground">
+                <User className="w-5 h-5" />
+              </AvatarFallback>
+            </Avatar>
           </Button>
         )}
       </div>
