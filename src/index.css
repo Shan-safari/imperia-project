@@ -1,7 +1,24 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes wave {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-background {
+  background: linear-gradient(-45deg, hsl(var(--primary)), #2c6f9e, #4ea8d9, #1b4a7a);
+  background-size: 400% 400%;
+  animation: wave 15s ease infinite;
+}
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
 
