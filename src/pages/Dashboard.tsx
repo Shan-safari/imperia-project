@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -118,7 +117,7 @@ export default function Dashboard() {
                     <div className="flex items-center gap-3 mt-1">
                       <span className="bg-blue-100 text-blue-700 px-2 rounded text-xs">Confidence: 68%</span>
                       <span className="bg-red-100 text-red-700 px-2 rounded text-xs">Failed</span>
-                      <span className="bg-gray-100 text-gray-700 px-2 rounded text-xs">Advisory: Communication < 1 month</span>
+                      <span className="bg-gray-100 text-gray-700 px-2 rounded text-xs">Advisory: Communication &lt; 1 month</span>
                     </div>
                   </div>
                 </div>
