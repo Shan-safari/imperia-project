@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -10,14 +9,13 @@ import {
   SidebarGroup,
   SidebarGroupContent
 } from "@/components/ui/sidebar";
-import { Home, LayoutGrid, Compass, MessageSquare, Gem, HelpCircle, Settings } from "lucide-react";
+import { Home, LayoutGrid, Compass, MessageSquare, HelpCircle, Settings } from "lucide-react";
 
 const menuItems = [
     { to: "/", icon: Home, label: "Home" },
     { to: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
     { to: "/explore", icon: Compass, label: "Explore" },
     { to: "/messages", icon: MessageSquare, label: "Messages" },
-    { to: "/premium", icon: Gem, label: "Premium" },
 ];
 
 const bottomMenuItems = [

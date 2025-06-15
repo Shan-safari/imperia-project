@@ -1,4 +1,3 @@
-
 import React, { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -16,7 +15,6 @@ const Auth = React.lazy(() => import("./pages/Auth"));
 const Explore = React.lazy(() => import("./pages/Explore"));
 const Profile = React.lazy(() => import("./pages/Profile"));
 const Messages = React.lazy(() => import("./pages/Messages"));
-const Premium = React.lazy(() => import("./pages/Premium"));
 const Settings = React.lazy(() => import("./pages/Settings"));
 const Payment = React.lazy(() => import("./pages/Payment"));
 const HelpCenter = React.lazy(() => import("./pages/HelpCenter"));
@@ -39,7 +37,6 @@ const App = () => (
               <Route path="/explore" element={<Explore />} />
               <Route path="/profile/:id" element={<Profile />} />
               <Route path="/messages" element={<Messages />} />
-              <Route path="/premium" element={<Premium />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/help-center" element={<HelpCenter />} />
