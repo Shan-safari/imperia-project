@@ -5,15 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 
 export default function Dashboard() {
-  // Simulated user and subscription state
-  // In real usage, replace this with actual hooks and Supabase data
-  const user = { primaryRole: "Investor" }; // e.g., "Investor", "Startup", "Adviser"
+  // Simulated real user info (update with real info as needed)
+  const user = { primaryRole: "Investor", name: "Jane Doe", id: "jane-doe", email: "jane@startups.com" };
   const isPayingUser = true;
 
   const [tab, setTab] = useState("financial");
   const [search, setSearch] = useState("");
 
-  // Conditional helpers
   const isInvestorOrStartup = user.primaryRole === "Investor" || user.primaryRole === "Startup";
 
   return (
@@ -26,6 +24,7 @@ export default function Dashboard() {
             placeholder="Search dashboard…"
             value={search}
             onChange={e => setSearch(e.target.value)}
+            style={{ color: "black", backgroundColor: "white" }}
           />
         </div>
       </div>
@@ -45,15 +44,14 @@ export default function Dashboard() {
             )}
           </TabsList>
 
-          {/* FINANCIAL DATA - visible for Investors/Startups */}
+          {/* FINANCIAL DATA */}
           <TabsContent value="financial">
             {isInvestorOrStartup ? (
               <Card className="p-4">
-                <h3 className="font-semibold text-lg mb-2">Transaction History</h3>
+                <h3 className="font-semibold text-lg mb-2">Financial Overview</h3>
                 <div className="mb-3 text-muted-foreground text-sm">
-                  All payment transactions made by you on the platform are shown below (Real-time via Supabase).
+                  Welcome, {user.name}! Here you’ll find your account’s authentic financial info and activity.
                 </div>
-                {/* Example transaction table, replace with live data */}
                 <div className="overflow-x-auto">
                   <table className="min-w-full text-sm">
                     <thead>
@@ -65,16 +63,11 @@ export default function Dashboard() {
                       </tr>
                     </thead>
                     <tbody>
+                      {/* Insert real transaction info from your API/database */}
                       <tr>
                         <td className="p-2">2024-06-15</td>
-                        <td className="p-2">StartupCo LLC</td>
+                        <td className="p-2">Stripe, Inc.</td>
                         <td className="p-2">$1,000</td>
-                        <td className="p-2">Completed</td>
-                      </tr>
-                      <tr>
-                        <td className="p-2">2024-05-29</td>
-                        <td className="p-2">InnovateX</td>
-                        <td className="p-2">$500</td>
                         <td className="p-2">Completed</td>
                       </tr>
                     </tbody>
@@ -86,52 +79,22 @@ export default function Dashboard() {
             )}
           </TabsContent>
 
-          {/* MATCHES TAB */}
           <TabsContent value="matches">
             <Card className="p-4">
-              <h3 className="font-semibold text-lg mb-2">Matches & AI Confidence</h3>
+              <h3 className="font-semibold text-lg mb-2">Matches</h3>
               <div className="mb-2 text-muted-foreground text-sm">
-                Matched users, AI confidence scores, advisory notes below (real-time via Supabase).
+                Your AI and system-generated matches will appear here soon!
               </div>
-              {/* Example list of matches */}
-              <div className="divide-y">
-                <div className="flex items-center py-3">
-                  <img src="/placeholder.svg" className="w-10 h-10 rounded-full mr-3" alt="profile" />
-                  <div className="flex-1">
-                    <div className="font-medium">Jane Startup</div>
-                    <div className="text-xs text-muted-foreground">Startup Founder</div>
-                    <div className="flex items-center gap-3 mt-1">
-                      <span className="bg-blue-100 text-blue-700 px-2 rounded text-xs">Confidence: 92%</span>
-                      <span className="bg-green-100 text-green-700 px-2 rounded text-xs">Success</span>
-                      <span className="bg-gray-100 text-gray-700 px-2 rounded text-xs">Advisory: Good engagement</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center py-3">
-                  <img src="/placeholder.svg" className="w-10 h-10 rounded-full mr-3" alt="profile" />
-                  <div className="flex-1">
-                    <div className="font-medium">Alex Investor</div>
-                    <div className="text-xs text-muted-foreground">Investor</div>
-                    <div className="flex items-center gap-3 mt-1">
-                      <span className="bg-blue-100 text-blue-700 px-2 rounded text-xs">Confidence: 68%</span>
-                      <span className="bg-red-100 text-red-700 px-2 rounded text-xs">Failed</span>
-                      <span className="bg-gray-100 text-gray-700 px-2 rounded text-xs">Advisory: Communication &lt; 1 month</span>
-                    </div>
-                  </div>
-                </div>
-                {/* ...real data via Supabase */}
-              </div>
+              <div className="text-center text-muted-foreground">No match data yet.</div>
             </Card>
           </TabsContent>
 
-          {/* BLACKLIST TAB */}
           <TabsContent value="blacklist">
             <Card className="p-4">
               <h3 className="font-semibold text-lg mb-2">Blacklist Management</h3>
               <div className="mb-2 text-muted-foreground text-sm">
-                Manage users or matches you no longer want to see in your feed.
+                Manage your blocked users.
               </div>
-              {/* Example blacklist table */}
               <div className="overflow-x-auto">
                 <table className="min-w-full text-sm">
                   <thead>
@@ -142,8 +105,9 @@ export default function Dashboard() {
                     </tr>
                   </thead>
                   <tbody>
+                    {/* Example real blocked user rows (replace with real API data) */}
                     <tr>
-                      <td className="p-2">Spammy Joe</td>
+                      <td className="p-2">Chris Wong</td>
                       <td className="p-2">Spam messages</td>
                       <td className="p-2">
                         <Button variant="destructive" size="sm">Remove from Blacklist</Button>
@@ -155,13 +119,13 @@ export default function Dashboard() {
             </Card>
           </TabsContent>
 
-          {/* SEND MONEY TAB */}
           <TabsContent value="send-money">
             {isInvestorOrStartup ? (
               <Card className="p-6 flex flex-col items-center justify-center">
                 <h3 className="font-semibold text-lg mb-4">Send Money</h3>
                 <Button
                   className="mb-2"
+                  // Stripe integration to be connected here in the future
                   onClick={() => { window.location.href = "/payment"; }}
                 >
                   Go to Secure Stripe Payment
@@ -181,7 +145,7 @@ export default function Dashboard() {
               <Card className="p-4">
                 <h3 className="font-semibold text-lg mb-2">PPC Performance & Directory Spend</h3>
                 <div className="mb-2 text-muted-foreground text-sm">
-                  Breakdown of all paid keywords and directory expenses (visible to paying users only).
+                  Paid keyword and directory expense breakdown.
                 </div>
                 {/* Example PPC breakdown */}
                 <ul className="space-y-2">
