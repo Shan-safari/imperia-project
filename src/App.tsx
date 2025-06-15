@@ -4,11 +4,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import RegionLocked from "./pages/RegionLocked";
 import "@/i18n";
+import { DashboardLayout } from "./components/layout/DashboardLayout";
 
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 const Auth = React.lazy(() => import("./pages/Auth"));
@@ -30,16 +31,19 @@ const App = () => (
       <BrowserRouter>
         <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route element={<DashboardLayout />}>
+              <Route path="/" element={<Index />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/explore" element={<Explore />} />
+              <Route path="/profile/:id" element={<Profile />} />
+              <Route path="/messages" element={<Messages />} />
+              <Route path="/premium" element={<Premium />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/payment" element={<Payment />} />
+              <Route path="/help-center" element={<HelpCenter />} />
+            </Route>
+
             <Route path="/auth" element={<Auth />} />
-            <Route path="/explore" element={<Explore />} />
-            <Route path="/profile/:id" element={<Profile />} />
-            <Route path="/messages" element={<Messages />} />
-            <Route path="/premium" element={<Premium />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/payment" element={<Payment />} />
-            <Route path="/help-center" element={<HelpCenter />} />
             <Route path="/region-locked" element={<RegionLocked />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
