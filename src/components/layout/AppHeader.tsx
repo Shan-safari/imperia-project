@@ -27,6 +27,10 @@ export const AppHeader = () => {
     navigate("/");
   };
 
+  const handleNotificationClick = () => {
+    navigate("/messages");
+  };
+
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 border-b shrink-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6">
       <div className="flex items-center gap-2 md:gap-4">
@@ -52,7 +56,12 @@ export const AppHeader = () => {
 
       <div className="flex items-center gap-2 md:gap-4">
         <LanguageSelector />
-        <Button variant="ghost" size="icon" className="rounded-full">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="rounded-full"
+          onClick={handleNotificationClick}
+        >
           <Bell className="w-5 h-5" />
           <span className="sr-only">Notifications</span>
         </Button>
