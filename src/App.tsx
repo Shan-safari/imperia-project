@@ -22,6 +22,7 @@ const Payment = React.lazy(() => import("./pages/Payment"));
 const HelpCenter = React.lazy(() => import("./pages/HelpCenter"));
 const Signup = React.lazy(() => import("./pages/Signup"));
 const Questionnaire = React.lazy(() => import("./pages/Questionnaire"));
+const RoleSelection = React.lazy(() => import("./pages/RoleSelection"));
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const App = () => {
 
               <Route path="/auth" element={<Auth />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/role-selection" element={<RoleSelection />} />
               <Route path="/questionnaire/:role" element={<Questionnaire />} />
               <Route path="/region-locked" element={<RegionLocked />} />
               <Route path="*" element={<NotFound />} />

@@ -44,9 +44,15 @@ export function RoleSelectionForm() {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log("Form submitted with:", data);
+    
+    // Store role data in localStorage for the questionnaire
+    localStorage.setItem('selectedRoles', JSON.stringify(data));
+    
     if (data.secondaryRole) {
-      navigate(`/questionnaire/${data.secondaryRole.toLowerCase()}`);
-    } else if (data.primaryRole) {
+      // If user selected a secondary role, go to role-specific questionnaire
+      navigate(`/questionnaire/${data.primaryRole.toLowerCase().replace(' ', '-')}`);
+    } else {
+      // If only primary role selected, go to simple signup
       navigate("/signup");
     }
   }
@@ -95,7 +101,7 @@ export function RoleSelectionForm() {
                 Secondary Role To Match With (Optional):
               </FormLabel>
               <p className="text-sm text-muted-foreground">
-                If you don’t want to match right now, you can just click
+                If you don't want to match right now, you can just click
                 Continue below.
               </p>
               <FormControl>

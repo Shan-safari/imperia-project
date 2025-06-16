@@ -13,10 +13,10 @@ interface Match {
   user_2_id: string;
   ai_score: number;
   created_at: string;
-  profiles: {
+  profile: {
     name: string;
     role: string;
-  };
+  } | null;
 }
 
 interface DashboardStats {
@@ -59,7 +59,7 @@ export default function Dashboard() {
           user_2_id,
           ai_score,
           created_at,
-          profiles!matches_user_2_id_fkey (
+          profile:profiles!matches_user_2_id_fkey (
             name,
             role
           )
@@ -100,6 +100,10 @@ export default function Dashboard() {
     }
   };
 
+  const handleStartMatching = () => {
+    navigate("/role-selection");
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -114,6 +118,19 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold tracking-tight text-white">Dashboard</h1>
         <p className="text-white/80">Welcome back! Here's what's happening with your network.</p>
       </div>
+
+      {/* Start Matching Button */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Ready to Connect?</CardTitle>
+          <CardDescription>Start finding your perfect matches today</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button onClick={handleStartMatching} size="lg" className="w-full">
+            Start Instant Matching
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -178,8 +195,8 @@ export default function Dashboard() {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-medium">{match.profiles?.name || "Anonymous"}</p>
-                      <p className="text-sm text-muted-foreground">{match.profiles?.role || "Role not specified"}</p>
+                      <p className="font-medium">{match.profile?.name || "Anonymous"}</p>
+                      <p className="text-sm text-muted-foreground">{match.profile?.role || "Role not specified"}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
