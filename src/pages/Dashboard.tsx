@@ -1,63 +1,121 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { useAuthStore } from "@/store/authStore";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
-// You would fetch this with real backend/API in production:
-const getMatchesForUser = (userId: string) => {
-  // Example "matches" mock: You'd get this from an API based on the real user
-  if (userId === "jane-doe") {
-    return [
-      {
-        id: "match1",
-        name: "Fintech Startup",
-        aiScore: 82,
-        summary: "This match aligns strongly with your investment focus. Consider reaching out soon!"
-      },
-      {
-        id: "match2",
-        name: "GreenTech Solutions",
-        aiScore: 67,
-        summary: "Moderate match for your interests. Review further before proceeding."
-      }
-    ];
-  }
-  // No matches for other users (customize as needed)
-  return [];
-};
-
-// Example AI advisory generation:
-function getAIAdvisory(matches: { id: string, name: string, aiScore: number, summary: string }[]) {
-  if (!matches || matches.length === 0) return null;
-
-  // Simple example logic for AI advice. In production use backend/AI API.
-  const highScoreMatch = matches.find(m => m.aiScore > 80);
-  if (highScoreMatch) {
-    return `Opportunity: "${highScoreMatch.name}" scored highest (${highScoreMatch.aiScore}%). ${highScoreMatch.summary}`;
-  }
-  return "Your matches are moderate. Review and connect for more details.";
+interface Match {
+  id: string;
+  ai_score: number;
+  created_at: string;
+  profiles: {
+    name: string;
+    role: string;
+  };
 }
 
 export default function Dashboard() {
-  // Fetch real authenticated user details (replace with real auth provider/store)
-  const user = { primaryRole: "Investor", name: "Jane Doe", id: "jane-doe", email: "jane@startups.com" };
-
-  // Dynamically determine user's matches
-  const userMatches = getMatchesForUser(user.id);
-  const aiAdvisory = getAIAdvisory(userMatches);
-
-  // Only users with investor or startup roles see financial/send money tabs
-  const isInvestorOrStartup = user.primaryRole === "Investor" || user.primaryRole === "Startup";
-  const isPayingUser = true; // You can update this logic to compute paying user status
-
-  // Add extra 'advisory' tab conditionally
-  const [tab, setTab] = useState(
-    userMatches.length > 0
-      ? "advisory"
-      : (isInvestorOrStartup ? "financial" : "matches")
-  );
+  const { user, isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [tab, setTab] = useState("matches");
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/auth");
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Fetch user profile and matches
+  useEffect(() => {
+    if (user) {
+      fetchUserData();
+    }
+  }, [user]);
+
+  const fetchUserData = async () => {
+    try {
+      // Fetch user profile
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user?.id)
+        .single();
+
+      setUserProfile(profile);
+
+      // Fetch user matches with profile data
+      const { data: matchesData } = await supabase
+        .from("matches")
+        .select(`
+          id,
+          ai_score,
+          created_at,
+          user_2_id,
+          profiles!matches_user_2_id_fkey(name, role)
+        `)
+        .eq("user_1_id", user?.id);
+
+      setMatches(matchesData || []);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Generate AI advisory based on real matches
+  const getAIAdvisory = () => {
+    if (!matches || matches.length === 0) return null;
+
+    const highScoreMatch = matches.find(m => m.ai_score > 80);
+    if (highScoreMatch) {
+      return `Opportunity: "${highScoreMatch.profiles?.name}" scored highest (${highScoreMatch.ai_score}%). This is a strong match for your profile - consider reaching out soon!`;
+    }
+    return "Your matches are moderate. Review and connect for more details.";
+  };
+
+  const aiAdvisory = getAIAdvisory();
+  const isInvestorOrStartup = userProfile?.role === "Investor" || userProfile?.role === "Startup";
+  const isPayingUser = true; // This would be determined by subscription status
+
+  // Set initial tab based on available data
+  useEffect(() => {
+    if (matches.length > 0 && tab === "matches") {
+      setTab("advisory");
+    }
+  }, [matches]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div>Loading...</div>
+      </div>
+    );
+  }
+
+  if (!userProfile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="p-6">
+          <h3 className="font-semibold text-lg mb-2">Complete Your Profile</h3>
+          <p className="text-muted-foreground mb-4">
+            Please complete your profile to start using the dashboard.
+          </p>
+          <Button onClick={() => navigate("/questionnaire/Startup")}>
+            Complete Profile
+          </Button>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -73,10 +131,11 @@ export default function Dashboard() {
           />
         </div>
       </div>
+      
       <section className="flex-1 w-full max-w-7xl mx-auto py-6 px-4 md:px-12">
         <Tabs value={tab} onValueChange={setTab}>
           <TabsList className="mb-4 flex flex-wrap bg-card">
-            {userMatches.length > 0 && (
+            {matches.length > 0 && (
               <TabsTrigger value="advisory">Real-Time Advisory</TabsTrigger>
             )}
             {isInvestorOrStartup && (
@@ -94,11 +153,11 @@ export default function Dashboard() {
 
           {/* REAL-TIME ADVISORY TAB */}
           <TabsContent value="advisory">
-            {userMatches.length > 0 ? (
+            {matches.length > 0 ? (
               <Card className="p-4">
                 <h3 className="font-semibold text-lg mb-2">AI Advisory</h3>
                 <div className="mb-2 text-muted-foreground text-sm">
-                  Here’s what the AI recommends based on your latest matches:
+                  Here's what the AI recommends based on your latest matches:
                 </div>
                 <div className="mb-4 text-base text-foreground">
                   {aiAdvisory}
@@ -118,28 +177,10 @@ export default function Dashboard() {
               <Card className="p-4">
                 <h3 className="font-semibold text-lg mb-2">Financial Overview</h3>
                 <div className="mb-3 text-muted-foreground text-sm">
-                  Welcome, {user.name}! Here you’ll find your account’s authentic financial info and activity.
+                  Welcome, {userProfile.name}! Here you'll find your account's authentic financial info and activity.
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full text-sm">
-                    <thead>
-                      <tr>
-                        <th className="p-2 text-left">Date</th>
-                        <th className="p-2 text-left">Recipient</th>
-                        <th className="p-2 text-left">Amount</th>
-                        <th className="p-2 text-left">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {/* You'd dynamically load real transaction info here */}
-                      <tr>
-                        <td className="p-2">2024-06-15</td>
-                        <td className="p-2">Stripe, Inc.</td>
-                        <td className="p-2">$1,000</td>
-                        <td className="p-2">Completed</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                <div className="text-center text-muted-foreground">
+                  No financial transactions yet. Start connecting with matches to begin transactions.
                 </div>
               </Card>
             ) : (
@@ -151,19 +192,22 @@ export default function Dashboard() {
             <Card className="p-4">
               <h3 className="font-semibold text-lg mb-2">Matches</h3>
               <div className="mb-2 text-muted-foreground text-sm">
-                {userMatches.length > 0
+                {matches.length > 0
                   ? "These are your current AI-generated matches."
                   : "Your AI and system-generated matches will appear here soon!"}
               </div>
-              {userMatches.length === 0 ? (
+              {matches.length === 0 ? (
                 <div className="text-center text-muted-foreground">No match data yet.</div>
               ) : (
                 <ul className="space-y-3">
-                  {userMatches.map(m => (
-                    <li key={m.id} className="border rounded p-3 bg-muted">
-                      <div className="font-medium">{m.name}</div>
-                      <div className="text-xs text-muted-foreground">AI Score: {m.aiScore}%</div>
-                      <div className="text-xs text-muted-foreground">{m.summary}</div>
+                  {matches.map(match => (
+                    <li key={match.id} className="border rounded p-3 bg-muted">
+                      <div className="font-medium">{match.profiles?.name}</div>
+                      <div className="text-xs text-muted-foreground">AI Score: {match.ai_score}%</div>
+                      <div className="text-xs text-muted-foreground">Role: {match.profiles?.role}</div>
+                      <div className="text-xs text-muted-foreground">
+                        Matched: {new Date(match.created_at).toLocaleDateString()}
+                      </div>
                     </li>
                   ))}
                 </ul>

@@ -17,34 +17,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import React, { useState } from "react";
 
-// Mock real users – replace with REAL list or API as needed!
-const REAL_USERS = [
-  { id: "jane-doe", name: "Jane Doe" },
-  { id: "alex-smith", name: "Alex Smith" },
-  { id: "chris-wong", name: "Chris Wong" }
-];
-
 export const AppHeader = () => {
   const { user, isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [showResults, setShowResults] = useState(false);
 
-  // Filter users by search term, not case-sensitive
-  const filteredUsers = REAL_USERS.filter(u =>
-    u.name.toLowerCase().includes(searchTerm.toLowerCase()) && searchTerm.trim() !== ""
-  );
-
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/");
-  };
-
-  const handleSearchSelect = (selectedUser: { id: string, name: string }) => {
-    // Direct to messages page, optionally you could make it /messages?user={id}
-    navigate(`/messages?user=${selectedUser.id}`);
-    setSearchTerm("");
-    setShowResults(false);
   };
 
   return (
@@ -61,30 +41,12 @@ export const AppHeader = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             value={searchTerm}
-            onChange={e => {
-              setSearchTerm(e.target.value);
-              setShowResults(true);
-            }}
-            placeholder="Search users…"
+            onChange={e => setSearchTerm(e.target.value)}
+            placeholder="Search platform…"
             className="pl-10 h-10 w-full rounded-full"
-            style={{ color: "black", backgroundColor: "white" }} // font black, bg white for clarity
-            onFocus={() => setShowResults(true)}
-            onBlur={() => setTimeout(() => setShowResults(false), 100)} // Slight delay so click registers
+            style={{ color: "black", backgroundColor: "white" }}
             autoComplete="off"
           />
-          {showResults && filteredUsers.length > 0 && (
-            <div className="absolute left-0 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow z-40 max-h-56 overflow-auto">
-              {filteredUsers.map(user => (
-                <div
-                  key={user.id}
-                  className="px-4 py-2 cursor-pointer hover:bg-primary/10 text-black"
-                  onMouseDown={() => handleSearchSelect(user)} // onMouseDown to avoid blur hiding before click fires
-                >
-                  {user.name}
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
