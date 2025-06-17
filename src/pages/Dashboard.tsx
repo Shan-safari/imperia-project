@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { supabase } from "@/integrations/supabase/client";
@@ -51,28 +50,46 @@ export default function Dashboard() {
     if (!user) return;
 
     try {
-      // Fetch matches with user profiles
+      // Fetch matches first
       const { data: matchesData, error: matchesError } = await supabase
         .from("matches")
-        .select(`
-          id,
-          user_2_id,
-          ai_score,
-          created_at,
-          profile:profiles!matches_user_2_id_fkey (
-            name,
-            role
-          )
-        `)
+        .select("id, user_2_id, ai_score, created_at")
         .eq("user_1_id", user.id)
         .eq("status", "active")
         .limit(5);
 
       if (matchesError) {
         console.error("Error fetching matches:", matchesError);
-      } else if (matchesData) {
-        setMatches(matchesData as Match[]);
       }
+
+      // If we have matches, fetch the corresponding profiles
+      let matchesWithProfiles: Match[] = [];
+      if (matchesData && matchesData.length > 0) {
+        const userIds = matchesData.map(match => match.user_2_id);
+        
+        const { data: profilesData, error: profilesError } = await supabase
+          .from("profiles")
+          .select("id, name, role")
+          .in("id", userIds);
+
+        if (profilesError) {
+          console.error("Error fetching profiles:", profilesError);
+        }
+
+        // Combine matches with profiles
+        matchesWithProfiles = matchesData.map(match => {
+          const profile = profilesData?.find(p => p.id === match.user_2_id);
+          return {
+            ...match,
+            profile: profile ? {
+              name: profile.name || "Anonymous",
+              role: profile.role || "Role not specified"
+            } : null
+          };
+        });
+      }
+
+      setMatches(matchesWithProfiles);
 
       // Fetch unread messages count
       const { count: unreadCount } = await supabase
@@ -90,7 +107,7 @@ export default function Dashboard() {
       setStats({
         totalMatches: totalMatchesCount || 0,
         unreadMessages: unreadCount || 0,
-        connections: matchesData?.length || 0,
+        connections: matchesWithProfiles.length || 0,
         successRate: 85, // Calculate this based on your business logic
       });
     } catch (error) {
