@@ -46,14 +46,21 @@ export default function Auth() {
       } else {
         const redirectUrl = `${window.location.origin}/`;
         
+        // Get selected roles from localStorage to include in user metadata
+        const selectedRoles = localStorage.getItem('selectedRoles');
+        let userData: any = { name };
+        
+        if (selectedRoles) {
+          const roles = JSON.parse(selectedRoles);
+          userData = { ...userData, ...roles };
+        }
+        
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: redirectUrl,
-            data: {
-              name: name,
-            },
+            data: userData,
           },
         });
         
