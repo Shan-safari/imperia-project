@@ -1,8 +1,12 @@
 
 import { NavigationBar } from "@/components/NavigationBar";
 import { RoleSelectionForm } from "@/components/auth/RoleSelectionForm";
+import { useLocation } from "react-router-dom";
 
 export default function RoleSelection() {
+  const location = useLocation();
+  const initialPrompt = location.state?.initialPrompt || "";
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <NavigationBar />
@@ -14,7 +18,7 @@ export default function RoleSelection() {
           <p className="text-muted-foreground text-center mb-8">
             Select your primary role and optionally a secondary role to match with.
           </p>
-          <RoleSelectionForm />
+          <RoleSelectionForm initialPrompt={initialPrompt} />
         </div>
       </div>
     </div>

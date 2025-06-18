@@ -13,7 +13,6 @@ import "@/i18n";
 import { DashboardLayout } from "./components/layout/DashboardLayout";
 
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
-const Auth = React.lazy(() => import("./pages/Auth"));
 const Explore = React.lazy(() => import("./pages/Explore"));
 const Profile = React.lazy(() => import("./pages/Profile"));
 const Messages = React.lazy(() => import("./pages/Messages"));
@@ -56,7 +55,6 @@ const App = () => {
                 <Route path="/instant-matching" element={<InstantMatching />} />
               </Route>
 
-              <Route path="/auth" element={<Auth />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/role-selection" element={<RoleSelection />} />
               <Route path="/questionnaire/:role" element={<Questionnaire />} />

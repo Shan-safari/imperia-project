@@ -16,11 +16,8 @@ const Index = () => {
   const handleSubmit = () => {
     if (!prompt.trim()) return;
     
-    if (isAuthenticated) {
-      navigate("/prompt-matching", { state: { initialPrompt: prompt } });
-    } else {
-      navigate("/auth", { state: { promptAfterAuth: prompt } });
-    }
+    // Always go to role selection with the prompt
+    navigate("/role-selection", { state: { initialPrompt: prompt } });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -32,7 +29,7 @@ const Index = () => {
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center py-16 px-4">
-      <p className="text-white text-center max-w-4xl mb-8 text-sm">
+      <p className="text-white text-center max-w-4xl mb-8 text-base">
         Form meaningful connections in seconds with intelligent, AI-powered auto-matching that understands your intent.
       </p>
       
@@ -57,7 +54,7 @@ const Index = () => {
         </div>
         
         <p className="text-white/80 text-center mt-4 text-sm">
-          Press Enter to submit • {isAuthenticated ? "Ready to match" : "Sign in required"}
+          Press Enter to submit • Start matching now
         </p>
       </div>
     </div>

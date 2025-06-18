@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/store/authStore";
 
 const primaryRoles = [
   "Mentor",
@@ -37,12 +36,15 @@ const FormSchema = z.object({
   secondaryRole: z.enum(primaryRoles).optional(),
 });
 
-export function RoleSelectionForm() {
+interface RoleSelectionFormProps {
+  initialPrompt?: string;
+}
+
+export function RoleSelectionForm({ initialPrompt = "" }: RoleSelectionFormProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuthStore();
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log("Form submitted with:", data);
@@ -50,19 +52,13 @@ export function RoleSelectionForm() {
     // Store role data in localStorage for later use
     localStorage.setItem('selectedRoles', JSON.stringify(data));
     
-    if (data.secondaryRole) {
-      // If user selected a secondary role, go to role-specific questionnaire
-      navigate(`/questionnaire/${data.secondaryRole.toLowerCase().replace(' ', '-')}`);
-    } else {
-      // If only primary role selected, check authentication status
-      if (isAuthenticated) {
-        // User is already authenticated, go to dashboard
-        navigate("/dashboard");
-      } else {
-        // User needs to authenticate, go to auth page
-        navigate("/auth");
-      }
-    }
+    // Go to prompt matching with the initial prompt and role data
+    navigate("/prompt-matching", { 
+      state: { 
+        initialPrompt,
+        roleData: data
+      } 
+    });
   }
 
   return (
