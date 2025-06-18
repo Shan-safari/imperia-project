@@ -9,10 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      engagement_logs: {
+        Row: {
+          id: string
+          metadata: Json | null
+          timestamp: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          metadata?: Json | null
+          timestamp?: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          metadata?: Json | null
+          timestamp?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       matches: {
         Row: {
           ai_score: number | null
           created_at: string | null
+          expires_at: string | null
+          first_message_sent_at: string | null
           id: string
           status: string | null
           user_1_id: string
@@ -21,6 +47,8 @@ export type Database = {
         Insert: {
           ai_score?: number | null
           created_at?: string | null
+          expires_at?: string | null
+          first_message_sent_at?: string | null
           id?: string
           status?: string | null
           user_1_id: string
@@ -29,6 +57,8 @@ export type Database = {
         Update: {
           ai_score?: number | null
           created_at?: string | null
+          expires_at?: string | null
+          first_message_sent_at?: string | null
           id?: string
           status?: string | null
           user_1_id?: string
@@ -107,45 +137,78 @@ export type Database = {
       }
       profiles: {
         Row: {
+          availability: string | null
+          badges: string[] | null
           bio: string | null
           created_at: string | null
           email: string | null
+          embedding_vector: string | null
+          engagement_score: number | null
+          experience: string | null
+          fast_message_count: number | null
           id: string
+          industry: string | null
+          language: string | null
           location: string | null
+          match_quota: number | null
           name: string | null
           profile_picture_url: string | null
           role: string | null
           secondary_role: string | null
+          skills: string[] | null
           tags: string[] | null
           updated_at: string | null
+          vision: string | null
           year_of_birth: number | null
         }
         Insert: {
+          availability?: string | null
+          badges?: string[] | null
           bio?: string | null
           created_at?: string | null
           email?: string | null
+          embedding_vector?: string | null
+          engagement_score?: number | null
+          experience?: string | null
+          fast_message_count?: number | null
           id: string
+          industry?: string | null
+          language?: string | null
           location?: string | null
+          match_quota?: number | null
           name?: string | null
           profile_picture_url?: string | null
           role?: string | null
           secondary_role?: string | null
+          skills?: string[] | null
           tags?: string[] | null
           updated_at?: string | null
+          vision?: string | null
           year_of_birth?: number | null
         }
         Update: {
+          availability?: string | null
+          badges?: string[] | null
           bio?: string | null
           created_at?: string | null
           email?: string | null
+          embedding_vector?: string | null
+          engagement_score?: number | null
+          experience?: string | null
+          fast_message_count?: number | null
           id?: string
+          industry?: string | null
+          language?: string | null
           location?: string | null
+          match_quota?: number | null
           name?: string | null
           profile_picture_url?: string | null
           role?: string | null
           secondary_role?: string | null
+          skills?: string[] | null
           tags?: string[] | null
           updated_at?: string | null
+          vision?: string | null
           year_of_birth?: number | null
         }
         Relationships: []
@@ -155,7 +218,114 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      award_fast_responder_badge: {
+        Args: { user_uuid: string; match_uuid: string }
+        Returns: undefined
+      }
+      binary_quantize: {
+        Args: { "": string } | { "": unknown }
+        Returns: unknown
+      }
+      calculate_engagement_score: {
+        Args: { user_uuid: string }
+        Returns: number
+      }
+      expire_old_matches: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      halfvec_avg: {
+        Args: { "": number[] }
+        Returns: unknown
+      }
+      halfvec_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      halfvec_send: {
+        Args: { "": unknown }
+        Returns: string
+      }
+      halfvec_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
+      }
+      hnsw_bit_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnsw_halfvec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnsw_sparsevec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnswhandler: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflat_bit_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflat_halfvec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflathandler: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      l2_norm: {
+        Args: { "": unknown } | { "": unknown }
+        Returns: number
+      }
+      l2_normalize: {
+        Args: { "": string } | { "": unknown } | { "": unknown }
+        Returns: unknown
+      }
+      sparsevec_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      sparsevec_send: {
+        Args: { "": unknown }
+        Returns: string
+      }
+      sparsevec_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
+      }
+      update_engagement_scores: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      vector_avg: {
+        Args: { "": number[] }
+        Returns: string
+      }
+      vector_dims: {
+        Args: { "": string } | { "": unknown }
+        Returns: number
+      }
+      vector_norm: {
+        Args: { "": string }
+        Returns: number
+      }
+      vector_out: {
+        Args: { "": string }
+        Returns: unknown
+      }
+      vector_send: {
+        Args: { "": string }
+        Returns: string
+      }
+      vector_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never
