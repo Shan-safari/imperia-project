@@ -32,9 +32,9 @@ const Index = () => {
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center py-16 px-4">
-      <h1 className="md:text-6xl text-4xl font-extrabold text-white mb-6 text-center max-w-4xl">
+      <p className="text-white text-center max-w-4xl mb-8 text-sm">
         Form meaningful connections in seconds with intelligent, AI-powered auto-matching that understands your intent.
-      </h1>
+      </p>
       
       <div className="w-full max-w-2xl mt-8">
         <div className="relative">
