@@ -23,6 +23,8 @@ const HelpCenter = React.lazy(() => import("./pages/HelpCenter"));
 const Signup = React.lazy(() => import("./pages/Signup"));
 const Questionnaire = React.lazy(() => import("./pages/Questionnaire"));
 const RoleSelection = React.lazy(() => import("./pages/RoleSelection"));
+const PromptMatching = React.lazy(() => import("./pages/PromptMatching"));
+const InstantMatching = React.lazy(() => import("./pages/InstantMatching"));
 
 const queryClient = new QueryClient();
 
@@ -51,12 +53,14 @@ const App = () => {
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/payment" element={<Payment />} />
                 <Route path="/help-center" element={<HelpCenter />} />
+                <Route path="/instant-matching" element={<InstantMatching />} />
               </Route>
 
               <Route path="/auth" element={<Auth />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/role-selection" element={<RoleSelection />} />
               <Route path="/questionnaire/:role" element={<Questionnaire />} />
+              <Route path="/prompt-matching" element={<PromptMatching />} />
               <Route path="/region-locked" element={<RegionLocked />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
