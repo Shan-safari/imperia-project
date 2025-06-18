@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { logEngagement } from "./engagementService";
 
 export interface MatchingProfile {
   id: string;
@@ -15,6 +16,7 @@ export interface MatchingProfile {
   availability?: string;
   engagement_score?: number;
   badges?: string[];
+  profile_picture_url?: string;
   embedding_vector?: number[];
 }
 
@@ -119,6 +121,28 @@ export function calculateLanguageMatch(userLang: string | undefined, targetLang:
   return userLang.toLowerCase() === targetLang.toLowerCase() ? 1.0 : 0.3;
 }
 
+// Helper function to parse embedding vector from database
+function parseEmbeddingVector(embeddingStr: string | null): number[] | null {
+  if (!embeddingStr) return null;
+  
+  try {
+    // Handle both JSON array format and PostgreSQL vector format
+    if (embeddingStr.startsWith('[') && embeddingStr.endsWith(']')) {
+      return JSON.parse(embeddingStr);
+    } else if (embeddingStr.startsWith('(') && embeddingStr.endsWith(')')) {
+      // PostgreSQL vector format: (1,2,3,4)
+      const content = embeddingStr.slice(1, -1);
+      return content.split(',').map(Number);
+    } else {
+      // Try parsing as comma-separated values
+      return embeddingStr.split(',').map(Number);
+    }
+  } catch (error) {
+    console.error('Error parsing embedding vector:', error);
+    return null;
+  }
+}
+
 export async function findMatches(userId: string, limit: number = 10): Promise<MatchScore[]> {
   try {
     // Get user's profile
@@ -133,7 +157,7 @@ export async function findMatches(userId: string, limit: number = 10): Promise<M
     }
 
     // Generate user embedding if not exists
-    let userEmbedding = userProfile.embedding_vector;
+    let userEmbedding = parseEmbeddingVector(userProfile.embedding_vector);
     if (!userEmbedding) {
       const profileText = [
         userProfile.role,
@@ -147,10 +171,10 @@ export async function findMatches(userId: string, limit: number = 10): Promise<M
       
       userEmbedding = generateEmbedding(profileText);
       
-      // Update user profile with embedding
+      // Update user profile with embedding (as JSON string for database storage)
       await supabase
         .from('profiles')
-        .update({ embedding_vector: userEmbedding })
+        .update({ embedding_vector: JSON.stringify(userEmbedding) })
         .eq('id', userId);
     }
 
@@ -177,7 +201,7 @@ export async function findMatches(userId: string, limit: number = 10): Promise<M
 
     for (const candidate of candidates || []) {
       // Generate candidate embedding if not exists
-      let candidateEmbedding = candidate.embedding_vector;
+      let candidateEmbedding = parseEmbeddingVector(candidate.embedding_vector);
       if (!candidateEmbedding) {
         const profileText = [
           candidate.role,
@@ -191,10 +215,10 @@ export async function findMatches(userId: string, limit: number = 10): Promise<M
         
         candidateEmbedding = generateEmbedding(profileText);
         
-        // Update candidate profile with embedding
+        // Update candidate profile with embedding (as JSON string for database storage)
         await supabase
           .from('profiles')
-          .update({ embedding_vector: candidateEmbedding })
+          .update({ embedding_vector: JSON.stringify(candidateEmbedding) })
           .eq('id', candidate.id);
       }
 
@@ -220,9 +244,28 @@ export async function findMatches(userId: string, limit: number = 10): Promise<M
         (languageMatch * 0.05) +
         (engagementScore * 0.10);
 
+      // Convert database row to MatchingProfile
+      const matchingProfile: MatchingProfile = {
+        id: candidate.id,
+        name: candidate.name,
+        role: candidate.role,
+        secondary_role: candidate.secondary_role,
+        industry: candidate.industry,
+        location: candidate.location,
+        skills: candidate.skills,
+        vision: candidate.vision,
+        experience: candidate.experience,
+        language: candidate.language,
+        availability: candidate.availability,
+        engagement_score: candidate.engagement_score,
+        badges: candidate.badges,
+        profile_picture_url: candidate.profile_picture_url,
+        embedding_vector: candidateEmbedding
+      };
+
       matchScores.push({
         userId: candidate.id,
-        profile: candidate,
+        profile: matchingProfile,
         totalScore: Math.round(totalScore * 100), // Convert to percentage
         vectorSimilarity: Math.round(vectorSimilarity * 100),
         roleMatch: Math.round(roleMatch * 100),
